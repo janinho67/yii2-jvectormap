@@ -131,6 +131,15 @@ class JvectorMap extends Widget
     /** @var boolean [$zoomOnScroll] **/
     public $zoomOnScroll = true;
 
+    /** @var string callback [onRegionOver] **/
+    public $onRegionOver = NULL;
+
+    /** @var string callback [onRegionClick] **/
+    public $onRegionClick = NULL;
+
+    /** @var string callback [onRegionTipShow] **/
+    public $onRegionTipShow = NULL;
+
     public function init()
     {
         parent::init();
@@ -193,7 +202,18 @@ class JvectorMap extends Widget
             );
             echo Html::beginTag($this->tag, $this->htmlOptions);
             echo Html::endTag($this->tag);
-            Yii::$app->view->registerJs("jQuery('#{$this->id}').vectorMap($this->config)");
+
+            $jstemp= "var vmopt= $this->config;";
+            if (!empty($this->onRegionOver)) {
+                $jstemp .= " vmopt.onRegionOver= $this->onRegionOver;";
+            }
+            if (!empty($this->onRegionTipShow)) {
+                $jstemp .= " vmopt.onRegionTipShow= $this->onRegionTipShow;";
+            }
+            if (!empty($this->onRegionClick)) {
+                $jstemp .= " vmopt.onRegionClick= $this->onRegionClick;";
+            }
+            Yii::$app->view->registerJs("$jstemp; map= jQuery('#{$this->id}').vectorMap(vmopt)");
             } else {
                 $this->ErrorMap();
         }
